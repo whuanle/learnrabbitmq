@@ -956,11 +956,11 @@ channel.ExchangeDeclare("logs1", ExchangeType.Fanout);
 channel.QueueDeclare(queue: "fanout1");
 channel.QueueDeclare(queue: "fanout2");
 
-// 使用 routingKey 绑定交换器
+// 绑定只需要设置交换器名称，设置的 routingKey 会被忽略
 channel.QueueBind(exchange: "logs1", queue: "fanout1", routingKey: "debug");
 channel.QueueBind(exchange: "logs1", queue: "fanout2", routingKey: "info");
 
-// 发送消息时，需要指定 routingKey
+// 发送消息时，指定 routingKey 对 Fanout 交换器无效
 channel.BasicPublish(
 exchange: "logs1",
 routingKey: "debug",
@@ -970,6 +970,8 @@ body: Encoding.UTF8.GetBytes($"测试")
 ```
 
 ![image-20231114164857740](./images/image-20231114164857740.png)
+
+虽然我们指定了 `routingKey: "debug"`，但是因为是 Fanout 类型的交换器，所以队列只要绑定了 logs1 交换器，均可收到消息。
 
 
 
